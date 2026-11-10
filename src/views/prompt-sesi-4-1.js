@@ -65,5 +65,12 @@ export const tools = [
   }
 ]
 
-// teks yang disalin = seluruh field tool digabung
-export const toText = t => t.fields.map(([k, v]) => `${k}: ${v}`).join('\n')
+const asText = fields => fields.map(([k, v]) => `${k}: ${v}`).join('\n')
+
+// prompt polos (placeholder dibiarkan)
+export const toText = t => asText(t.fields)
+
+// prompt + data dummy dipasang menggantikan placeholder Input
+const filled = { Gemini: brd, ChatGPT: dataRekon, Claude: `${brd}\n\n${dataRekon}` }
+export const toTextWithData = t =>
+  asText(t.fields.map(([k, v]) => (k === 'Input' ? [k, `\n${filled[t.tool]}`] : [k, v])))

@@ -1,6 +1,6 @@
 <script setup>
 import CopyBtn from '../components/CopyBtn.vue'
-import { brd, dataRekon, cols, rows, tools, toText } from './prompt-sesi-4-1.js'
+import { brd, dataRekon, cols, rows, tools, toText, toTextWithData } from './prompt-sesi-4-1.js'
 </script>
 
 <template>
@@ -38,8 +38,11 @@ import { brd, dataRekon, cols, rows, tools, toText } from './prompt-sesi-4-1.js'
             <dt>{{ k }}</dt><dd>{{ v }}</dd>
           </template>
         </dl>
-        <p class="note">💡 {{ t.note }}</p>
-        <div class="bar"><CopyBtn :text="toText(t)" :label="`📋 Copy Prompt ${t.tool}`" /></div>
+        <p class="note">💡 {{ t.note }} Atau pakai tombol <b>Copy + Data Dummy</b> agar Input langsung terisi.</p>
+        <div class="bar">
+          <CopyBtn :text="toText(t)" label="📋 Copy Prompt Saja" />
+          <CopyBtn :text="toTextWithData(t)" label="📎 Copy + Data Dummy" :primary="false" />
+        </div>
       </div>
     </section>
 
