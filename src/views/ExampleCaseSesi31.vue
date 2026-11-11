@@ -8,7 +8,7 @@ import { sections, notes, outputs, prompt } from './prompt-sesi-3-1.js'
     <h1>Example Case Sesi 3.1 — Notulen Interview → Requirement &amp; KPI</h1>
     <p class="sub">Prompt siap pakai — klik <b>Copy Prompt</b>, tempel ke ChatGPT / Claude / Gemini.</p>
 
-    <div class="bar"><CopyBtn :text="prompt" label="📋 Copy Prompt" /></div>
+    <div class="bar"><CopyBtn :text="prompt" label="Copy Prompt" /></div>
 
     <section class="card" v-for="[k, v] in sections" :key="k">
       <h2>{{ k }}</h2>
@@ -31,7 +31,7 @@ import { sections, notes, outputs, prompt } from './prompt-sesi-3-1.js'
     </section>
 
     <footer>
-      <RouterLink to="/example-case-sesi-3">← Sesi 3</RouterLink> ·
+      <RouterLink to="/example-case-sesi-3">Sesi 3</RouterLink> ·
       <RouterLink to="/example-case-sesi-4">Sesi 4 →</RouterLink> ·
       <RouterLink to="/example-case-sesi-4-1">Sesi 4.1 →</RouterLink>
     </footer>

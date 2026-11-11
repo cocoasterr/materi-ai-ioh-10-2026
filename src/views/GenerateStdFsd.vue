@@ -30,10 +30,10 @@ function download() {
     <p class="sub">Isi parameter di bawah, lalu salin prompt yang terbentuk. Field kosong otomatis jadi placeholder <code>[[...]]</code> dan dianggap <b>NOT PROVIDED</b> oleh AI.</p>
 
     <div class="bar">
-      <CopyBtn :text="prompt" label="📋 Copy Prompt" />
-      <button @click="fillDummy">✨ Fill Dummy</button>
-      <button @click="download">⬇ Download .txt</button>
-      <button @click="reset">🧹 Reset</button>
+      <CopyBtn :text="prompt" label="Copy Prompt" />
+      <button @click="fillDummy">Fill Dummy</button>
+      <button @click="download">Download .txt</button>
+      <button @click="reset">Reset</button>
       <span class="count">{{ filled }}/{{ total }} field terisi</span>
     </div>
 
@@ -74,7 +74,7 @@ function download() {
       <h2>Preview Prompt</h2>
       <div class="body">
         <pre class="preview">{{ prompt }}</pre>
-        <div class="bar"><CopyBtn :text="prompt" label="📋 Copy Prompt" /></div>
+        <div class="bar"><CopyBtn :text="prompt" label="Copy Prompt" /></div>
       </div>
     </section>
 

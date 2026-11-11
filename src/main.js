@@ -13,6 +13,7 @@ const router = createRouter({
     { path: '/example-case-sesi-3-1', component: () => import('./views/ExampleCaseSesi31.vue') },
     { path: '/example-case-sesi-4', component: () => import('./views/ExampleCaseSesi4.vue') },
     { path: '/example-case-sesi-4-1', component: () => import('./views/ExampleCaseSesi41.vue') },
+    { path: '/handson-antigravity', component: () => import('./views/HandsonAntigravity.vue') },
     { path: '/:pathMatch(.*)*', redirect: '/' }
   ]
 })

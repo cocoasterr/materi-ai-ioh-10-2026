@@ -32,10 +32,10 @@ function download() {
 
     <div class="bar">
       <button class="primary" :class="{ done: copied }" @click="copy">
-        {{ copied ? '✅ Tersalin!' : '📋 Copy Prompt' }}
+        {{ copied ? 'Tersalin' : 'Copy Prompt' }}
       </button>
-      <button @click="download">⬇ Download .txt</button>
-      <button @click="print()">🖨 Print / PDF</button>
+      <button @click="download">Download .txt</button>
+      <button @click="print()">Print / PDF</button>
     </div>
 
     <section class="card" v-for="s in sections" :key="s.h">

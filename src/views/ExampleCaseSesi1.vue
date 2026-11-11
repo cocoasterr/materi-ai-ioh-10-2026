@@ -8,7 +8,7 @@ import { sections, brd, fsd, issueTypes, verdicts, prompt } from './prompt-sesi-
     <h1>Example Case Sesi 1 — Review Kualitas BRD &amp; FSD</h1>
     <p class="sub">Prompt siap pakai — klik <b>Copy Prompt</b>, tempel ke ChatGPT / Claude / Gemini.</p>
 
-    <div class="bar"><CopyBtn :text="prompt" label="📋 Copy Prompt" /></div>
+    <div class="bar"><CopyBtn :text="prompt" label="Copy Prompt" /></div>
 
     <section class="card" v-for="[k, v] in sections" :key="k">
       <h2>{{ k }}</h2>
@@ -20,11 +20,11 @@ import { sections, brd, fsd, issueTypes, verdicts, prompt } from './prompt-sesi-
       <div class="body two">
         <div>
           <pre>{{ brd }}</pre>
-          <div class="bar"><CopyBtn :text="brd" label="📋 Copy BRD" :primary="false" /></div>
+          <div class="bar"><CopyBtn :text="brd" label="Copy BRD" :primary="false" /></div>
         </div>
         <div>
           <pre>{{ fsd }}</pre>
-          <div class="bar"><CopyBtn :text="fsd" label="📋 Copy FSD" :primary="false" /></div>
+          <div class="bar"><CopyBtn :text="fsd" label="Copy FSD" :primary="false" /></div>
         </div>
       </div>
     </section>

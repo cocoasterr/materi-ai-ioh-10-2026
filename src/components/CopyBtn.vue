@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 
-const props = defineProps({ text: String, label: { type: String, default: '📋 Copy' }, primary: { type: Boolean, default: true } })
+const props = defineProps({ text: String, label: { type: String, default: 'Copy' }, primary: { type: Boolean, default: true } })
 const copied = ref(false)
 
 async function copy() {
@@ -19,6 +19,6 @@ async function copy() {
 
 <template>
   <button :class="{ primary, done: copied }" @click="copy">
-    {{ copied ? '✅ Tersalin!' : label }}
+    {{ copied ? 'Tersalin' : label }}
   </button>
 </template>

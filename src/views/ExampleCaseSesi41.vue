@@ -12,7 +12,7 @@ import { brd, dataRekon, cols, rows, tools, toText, toTextWithData } from './pro
       <h2>Data Dummy — BRD PR-05</h2>
       <div class="body">
         <pre>{{ brd }}</pre>
-        <div class="bar"><CopyBtn :text="brd" label="📋 Copy BRD" /></div>
+        <div class="bar"><CopyBtn :text="brd" label="Copy BRD" /></div>
       </div>
     </section>
 
@@ -26,7 +26,7 @@ import { brd, dataRekon, cols, rows, tools, toText, toTextWithData } from './pro
           </tbody>
         </table>
         <p>Data biaya: biaya kerja <b>Rp1,5 juta</b> per staf per hari.</p>
-        <div class="bar"><CopyBtn :text="dataRekon" label="📋 Copy Data" /></div>
+        <div class="bar"><CopyBtn :text="dataRekon" label="Copy Data" /></div>
       </div>
     </section>
 
@@ -38,15 +38,15 @@ import { brd, dataRekon, cols, rows, tools, toText, toTextWithData } from './pro
             <dt>{{ k }}</dt><dd>{{ v }}</dd>
           </template>
         </dl>
-        <p class="note">💡 {{ t.note }} Atau pakai tombol <b>Copy + Data Dummy</b> agar Input langsung terisi.</p>
+        <p class="note">{{ t.note }} Atau pakai tombol <b>Copy + Data Dummy</b> agar input langsung terisi.</p>
         <div class="bar">
-          <CopyBtn :text="toText(t)" label="📋 Copy Prompt Saja" />
-          <CopyBtn :text="toTextWithData(t)" label="📎 Copy + Data Dummy" :primary="false" />
+          <CopyBtn :text="toText(t)" label="Copy Prompt Saja" />
+          <CopyBtn :text="toTextWithData(t)" label="Copy + Data Dummy" :primary="false" />
         </div>
       </div>
     </section>
 
-    <footer><RouterLink to="/example-case-sesi-4">← Kembali ke Sesi 4</RouterLink></footer>
+    <footer><RouterLink to="/example-case-sesi-4">Kembali ke Sesi 4</RouterLink></footer>
   </div>
 </template>
 
