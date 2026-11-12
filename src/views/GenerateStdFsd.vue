@@ -56,7 +56,7 @@ function download() {
 
     <section class="card">
       <h2>Optional Modules</h2>
-      <div class="body">
+      <div class="body mods">
         <label class="check" v-for="[k, label] in modules" :key="k">
           <input type="checkbox" :value="k" v-model="form.modules"> <span>{{ label }}</span>
         </label>
@@ -96,10 +96,13 @@ input, textarea {
 }
 textarea { font-family: ui-monospace, Menlo, Consolas, monospace; line-height: 1.6 }
 input:focus, textarea:focus { outline: 2px solid var(--acc); outline-offset: -1px; border-color: var(--acc) }
-.check { flex-direction: row; align-items: center; gap: 9px; padding: 5px 0 }
+.mods { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+.check { flex-direction: row; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer }
+.check:has(:checked) { border-color: var(--acc); background: rgba(99,102,241,.08) }
+.check input { width: 18px; height: 18px; flex: none; accent-color: var(--acc); margin: 0 }
 .check > span { color: var(--fg) }
 .count { align-self: center; color: var(--mut); font-size: 13px }
 .preview { max-height: 420px; overflow: auto; background: #f8fafc; border: 1px solid var(--line); border-radius: 10px; padding: 14px }
 code { background: #eef2f9; padding: 1px 5px; border-radius: 5px; font-size: 13px }
-@media (max-width: 620px) { .grid { grid-template-columns: 1fr } }
+@media (max-width: 620px) { .mods, .grid { grid-template-columns: 1fr } }
 </style>
