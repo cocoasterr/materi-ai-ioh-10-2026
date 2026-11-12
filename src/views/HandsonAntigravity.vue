@@ -11,25 +11,32 @@ const file = (path, body) => win.value
   ? `(\n${body.split('\n').map(l => l ? 'echo ' + esc(l) : 'echo.').join('\n')}\n) > ${path.replaceAll('/', '\\')}`
   : `cat > ${path} << 'EOF'\n${body}\nEOF`
 
+const csv = {
+  pelanggan: `msisdn,nama,paket,kuota_gb,pemakaian_gb,tagihan_bulan_lalu,tagihan_bulan_ini,lokasi
+081211110001,Andi,Internet 25GB,25,31.5,150000,287000,Bekasi Barat
+081211110002,Sari,Internet 50GB,50,18.2,220000,220000,Depok
+081211110003,Budi,Unlimited Basic,999,120.4,300000,300000,Bekasi Barat`,
+  jaringan: `site_id,lokasi,status,utilisasi_persen,keterangan
+BKS-012,Bekasi Barat,DEGRADED,94,Kepadatan tinggi jam 19-23
+DPK-004,Depok,NORMAL,61,-
+JKT-101,Jakarta Selatan,MAINTENANCE,0,Perbaikan perangkat s/d 14 Nov`,
+  paket: `nama_paket,kuota_gb,harga,keterangan
+Internet 25GB,25,150000,Kelebihan pemakaian Rp20.000/GB
+Internet 50GB,50,220000,Kelebihan pemakaian Rp15.000/GB
+Internet 75GB,75,280000,Bonus 10GB malam
+Unlimited Basic,999,300000,FUP 100GB lalu turun ke 2Mbps`
+}
+const preview = Object.entries(csv).map(([n, c]) => [n + '.csv', c.split('\n').map(r => r.split(','))])
+
 const setup = computed(() => `${win.value
   ? 'mkdir "%USERPROFILE%\\demo-telco-agent\\.agents\\agents" "%USERPROFILE%\\demo-telco-agent\\data"\ncd /d "%USERPROFILE%\\demo-telco-agent"'
   : 'mkdir -p ~/demo-telco-agent/.agents/agents ~/demo-telco-agent/data\ncd ~/demo-telco-agent'}
 
-${file('data/pelanggan.csv', `msisdn,nama,paket,kuota_gb,pemakaian_gb,tagihan_bulan_lalu,tagihan_bulan_ini,lokasi
-081211110001,Andi,Internet 25GB,25,31.5,150000,287000,Bekasi Barat
-081211110002,Sari,Internet 50GB,50,18.2,220000,220000,Depok
-081211110003,Budi,Unlimited Basic,999,120.4,300000,300000,Bekasi Barat`)}
+${file('data/pelanggan.csv', csv.pelanggan)}
 
-${file('data/jaringan.csv', `site_id,lokasi,status,utilisasi_persen,keterangan
-BKS-012,Bekasi Barat,DEGRADED,94,Kepadatan tinggi jam 19-23
-DPK-004,Depok,NORMAL,61,-
-JKT-101,Jakarta Selatan,MAINTENANCE,0,Perbaikan perangkat s/d 14 Nov`)}
+${file('data/jaringan.csv', csv.jaringan)}
 
-${file('data/paket.csv', `nama_paket,kuota_gb,harga,keterangan
-Internet 25GB,25,150000,Kelebihan pemakaian Rp20.000/GB
-Internet 50GB,50,220000,Kelebihan pemakaian Rp15.000/GB
-Internet 75GB,75,280000,Bonus 10GB malam
-Unlimited Basic,999,300000,FUP 100GB lalu turun ke 2Mbps`)}`)
+${file('data/paket.csv', csv.paket)}`)
 
 const agent = (name, desc, model, prompt, tools = 'tools:\n  - view_file\n') => file(`.agents/agents/${name}.md`, `---
 name: ${name}
@@ -50,6 +57,7 @@ const agents = computed(() => [
     'Kamu konsultan produk telco. Bandingkan pemakaian pelanggan di data/pelanggan.csv dengan data/paket.csv.\nRekomendasikan 1 paket terbaik beserta estimasi penghematan per bulan.')
 ].join('\n\n'))
 
+const dl = computed(() => `https://antigravity.google/download?os=${win.value ? 'windows' : 'mac'}`)
 const test = 'Sebutkan custom subagent apa saja yang tersedia di workspace ini beserta model-nya.'
 
 const prompt = `Tangani komplain pelanggan 081211110001 ("internet lemot tiap malam, tagihan naik hampir 2x").
@@ -73,7 +81,17 @@ const hasil = [
 <template>
   <div class="wrap">
     <h1>Hands-on Antigravity — Multi Agent Customer Care Telco</h1>
-    <p class="sub">Skenario: pelanggan mengeluh “internet lambat dan tagihan membengkak”. Agent utama mendelegasikan ke tiga subagent, lalu menggabungkan hasilnya menjadi satu jawaban.</p>
+    <p class="sub">Skenario: pelanggan mengeluh “internet lambat dan tagihan membengkak”. Agent utama mendelegasikan ke empat subagent (billing, jaringan, paket, laporan), lalu menggabungkan hasilnya menjadi satu jawaban dan laporan Google Docs.</p>
+
+    <section class="card">
+      <h2>Gambaran Sesi</h2>
+      <div class="body">
+        <p><b>Tujuan:</b> memahami cara kerja multi-agent: agent utama membagi tugas ke subagent spesialis yang berjalan paralel, lalu hasilnya digabungkan.</p>
+        <p><b>Alur:</b> Keluhan pelanggan → Agent utama → Billing + Jaringan + Paket (paralel) → Laporan (Google Docs) → Jawaban akhir.</p>
+        <p><b>Yang disiapkan:</b> komputer Windows/macOS/Linux, akun Google, dan koneksi internet.</p>
+        <p><b>Langkah:</b> instal Antigravity, siapkan data dummy, buat subagent, uji, lalu jalankan skenario.</p>
+      </div>
+    </section>
 
     <p><a href="https://drive.google.com/drive/folders/1ME6jzVI-muqA7x8SgARSRXuxOHQfsxRm?usp=sharing" target="_blank" rel="noopener">Buka folder pendukung di Google Drive →</a></p>
 
@@ -82,7 +100,33 @@ const hasil = [
         role="radio" :aria-checked="os === v" :class="{ on: os === v }" @click="os = v">{{ l }}</button>
     </div>
 
-    <section class="card" v-for="[t, d, code, label] in steps" :key="t">
+    <section class="card">
+      <h2>0. Instalasi Antigravity</h2>
+      <div class="body">
+        <ol>
+          <li>Buka <a :href="dl" target="_blank" rel="noopener">antigravity.google/download</a> dan unduh installer sesuai OS (Linux: pilih di halaman unduhan).</li>
+          <li>{{ win ? 'Jalankan file .exe, ikuti wizard (Next → Install), lalu Finish.' : 'macOS: buka .dmg lalu seret Antigravity ke Applications. Linux: ikuti petunjuk di halaman unduhan.' }}</li>
+          <li>Buka Antigravity, login dengan akun Google, lalu pilih pengaturan awal (default sudah cukup).</li>
+          <li>Pastikan aplikasi terbuka dan dapat menerima prompt sebelum lanjut ke langkah 1.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Preview Data Dummy</h2>
+      <div class="body">
+        <div v-for="[n, rows] in preview" :key="n" style="overflow-x:auto">
+          <p><code>data/{{ n }}</code></p>
+          <table>
+            <thead><tr><th v-for="h in rows[0]" :key="h">{{ h }}</th></tr></thead>
+            <tbody><tr v-for="(r, j) in rows.slice(1)" :key="j"><td v-for="(c, k) in r" :key="k">{{ c }}</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <template v-for="([t, d, code, label]) in steps" :key="t">
+    <section class="card">
       <h2>{{ t }}</h2>
       <div class="body">
         <p>{{ d }}</p>
@@ -90,6 +134,7 @@ const hasil = [
         <pre>{{ code }}</pre>
       </div>
     </section>
+    </template>
 
     <section class="card">
       <h2>Hasil yang Diharapkan</h2>
