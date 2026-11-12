@@ -5,9 +5,10 @@ import CopyBtn from '../components/CopyBtn.vue'
 const os = ref('windows')
 const win = computed(() => os.value === 'windows')
 const home = computed(() => (win.value ? '%USERPROFILE%\\demo-telco-agent' : '~/demo-telco-agent'))
-// ponytail: cmd tidak mendukung heredoc, pakai blok echo; teks tidak boleh berisi & | < > % ^ ( )
+// ponytail: cmd tanpa heredoc, pakai blok echo; karakter khusus di luar tanda kutip di-escape dengan ^. Belum menangani %, tambahkan jika dibutuhkan
+const esc = l => l.split('"').map((p, i) => (i % 2 ? p : p.replace(/[&|<>()^]/g, '^$&'))).join('"')
 const file = (path, body) => win.value
-  ? `(\n${body.split('\n').map(l => 'echo ' + l).join('\n')}\n) > ${path.replaceAll('/', '\\')}`
+  ? `(\n${body.split('\n').map(l => l ? 'echo ' + esc(l) : 'echo.').join('\n')}\n) > ${path.replaceAll('/', '\\')}`
   : `cat > ${path} << 'EOF'\n${body}\nEOF`
 
 const setup = computed(() => `${win.value
@@ -30,12 +31,10 @@ Internet 50GB,50,220000,Kelebihan pemakaian Rp15.000/GB
 Internet 75GB,75,280000,Bonus 10GB malam
 Unlimited Basic,999,300000,FUP 100GB lalu turun ke 2Mbps`)}`)
 
-const agent = (name, desc, model, prompt) => file(`.agents/agents/${name}.md`, `---
+const agent = (name, desc, model, prompt, tools = 'tools:\n  - view_file\n') => file(`.agents/agents/${name}.md`, `---
 name: ${name}
 description: ${desc}
-tools:
-  - view_file
-subagent: true
+${tools}subagent: true
 mainAgent: false
 model: ${model}
 ---
@@ -51,21 +50,23 @@ const agents = computed(() => [
     'Kamu konsultan produk telco. Bandingkan pemakaian pelanggan di data/pelanggan.csv dengan data/paket.csv.\nRekomendasikan 1 paket terbaik beserta estimasi penghematan per bulan.')
 ].join('\n\n'))
 
-const prompt = `Pelanggan dengan nomor 081211110001 komplain: "Internet saya lemot banget tiap malam,
-dan tagihan bulan ini hampir dua kali lipat. Kenapa?"
+const test = 'Sebutkan custom subagent apa saja yang tersedia di workspace ini beserta model-nya.'
 
-Delegasikan ke subagent billing, jaringan, dan paket secara paralel,
-lalu gabungkan jadi satu jawaban customer care yang sopan dan solutif.`
+const prompt = `Tangani komplain pelanggan 081211110001 ("internet lemot tiap malam, tagihan naik hampir 2x").
+Jalankan subagent billing, jaringan, dan paket secara paralel, lalu minta subagent laporan
+membuat dokumen laporannya di Google Docs dan berikan link-nya.`
 
 const steps = computed(() => [
   ['1. Siapkan folder project & data dummy', `Jalankan di ${win.value ? 'Command Prompt (cmd)' : 'terminal'}. Membuat folder demo beserta data pelanggan, jaringan, dan katalog paket.`, setup.value, 'Copy Script'],
-  ['2. Buat 3 subagent', 'Setiap subagent punya satu tugas dan model sendiri: billing & paket (flash), jaringan (pro).', agents.value, 'Copy Script'],
-  ['3. Kirim prompt ke agent utama', `Buka folder ${home.value} di Antigravity App, lalu kirim prompt berikut.`, prompt, 'Copy Prompt']
+  ['2. Buat 4 subagent', 'Setiap subagent punya satu tugas dan model sendiri: billing, paket, dan laporan (flash), jaringan (pro).', agents.value, 'Copy Script'],
+  ['3. Uji subagent terdaftar', `Buka folder ${home.value} di Antigravity App, lalu kirim prompt berikut untuk memastikan keempat subagent terbaca.`, test, 'Copy Prompt'],
+  ['4. Kirim prompt ke agent utama', 'Kirim prompt berikut di Antigravity App untuk menjalankan seluruh alur.', prompt, 'Copy Prompt']
 ])
 const hasil = [
   ['Billing', 'Andi melebihi kuota 6,5 GB, sehingga tagihan naik dari Rp150.000 menjadi Rp287.000.'],
   ['Jaringan', 'Site BKS-012 Bekasi Barat padat (utilisasi 94%) pada jam 19–23, penyebab internet lambat di malam hari.'],
-  ['Paket', 'Internet 75GB (Rp280.000) lebih sesuai dan lebih hemat dibanding tagihan saat ini.']
+  ['Paket', 'Internet 75GB (Rp280.000) lebih sesuai dan lebih hemat dibanding tagihan saat ini.'],
+  ['Laporan', 'Dokumen Google Docs bernomor urut (mis. 001_2026-11-12) tersimpan di folder laporan-telco, lengkap dengan link.']
 ]
 </script>
 
@@ -74,12 +75,11 @@ const hasil = [
     <h1>Hands-on Antigravity — Multi Agent Customer Care Telco</h1>
     <p class="sub">Skenario: pelanggan mengeluh “internet lambat dan tagihan membengkak”. Agent utama mendelegasikan ke tiga subagent, lalu menggabungkan hasilnya menjadi satu jawaban.</p>
 
-    <p><a href="https://drive.google.com/file/d/1lITWoGszzsMj2mhzFrMI806cZRo9nvm6/view?usp=sharing" target="_blank" rel="noopener">Buka file pendukung di Google Drive →</a></p>
+    <p><a href="https://drive.google.com/drive/folders/1ME6jzVI-muqA7x8SgARSRXuxOHQfsxRm?usp=sharing" target="_blank" rel="noopener">Buka folder pendukung di Google Drive →</a></p>
 
-    <div class="bar">
-      <label>Sistem operasi:
-        <select v-model="os"><option value="windows">Windows (cmd)</option><option value="linux">Linux / macOS</option></select>
-      </label>
+    <div class="seg" role="radiogroup" aria-label="Sistem operasi">
+      <button v-for="[v, l] in [['windows', 'Windows (cmd)'], ['linux', 'Linux / macOS']]" :key="v"
+        role="radio" :aria-checked="os === v" :class="{ on: os === v }" @click="os = v">{{ l }}</button>
     </div>
 
     <section class="card" v-for="[t, d, code, label] in steps" :key="t">
@@ -98,7 +98,7 @@ const hasil = [
           <thead><tr><th>Subagent</th><th>Temuan</th></tr></thead>
           <tbody><tr v-for="[n, d] in hasil" :key="n"><td>{{ n }}</td><td>{{ d }}</td></tr></tbody>
         </table>
-        <p>Jawaban akhir merupakan gabungan ketiga temuan di atas.</p>
+        <p>Jawaban akhir merupakan gabungan tiga temuan pertama; laporan mendokumentasikannya.</p>
       </div>
     </section>
 
@@ -110,3 +110,10 @@ const hasil = [
     <footer><RouterLink to="/">← Beranda</RouterLink></footer>
   </div>
 </template>
+
+<style scoped>
+.seg{display:inline-flex;gap:4px;padding:4px;margin:0 0 18px;border-radius:999px;background:rgba(100,116,139,.12);border:1px solid var(--line)}
+.seg button{border:0;background:transparent;color:var(--mut);font:inherit;font-size:13.5px;font-weight:700;padding:8px 18px;border-radius:999px;cursor:pointer;transition:all .2s ease}
+.seg button.on{background:var(--grad);color:#fff;box-shadow:0 4px 14px -4px rgba(99,102,241,.6)}
+.seg button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+</style>
