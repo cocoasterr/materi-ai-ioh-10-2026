@@ -33,5 +33,10 @@ export const cases = [
     to: '/handson-antigravity', tag: 'Hands-on', badge: 'Multi-agent',
     title: 'Multi Agent dengan Antigravity: Customer Care Telco',
     desc: 'Satu agent utama mendelegasikan ke 3 subagent (billing, jaringan, paket) secara paralel, lalu menggabungkan jawaban.'
+  },
+  {
+    to: '/latihan-1', tag: 'Latihan 1', badge: 'Cost Analysis',
+    title: 'Perbandingan Biaya API: Gemini vs Claude vs OpenAI',
+    desc: 'Prompt AI API Cost Analyst beserta hasilnya: harga token, simulasi biaya chatbot per conversation, dan rekomendasi model paling ekonomis.'
   }
 ]

@@ -14,6 +14,7 @@ const router = createRouter({
     { path: '/example-case-sesi-4', component: () => import('./views/ExampleCaseSesi4.vue') },
     { path: '/example-case-sesi-4-1', component: () => import('./views/ExampleCaseSesi41.vue') },
     { path: '/handson-antigravity', component: () => import('./views/HandsonAntigravity.vue') },
+    { path: '/latihan-1', component: () => import('./views/Latihan1.vue') },
     { path: '/:pathMatch(.*)*', redirect: '/' }
   ]
 })
