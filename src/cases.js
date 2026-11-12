@@ -36,7 +36,7 @@ export const cases = [
   },
   {
     to: '/latihan-1', tag: 'Latihan 1', badge: 'Cost Analysis',
-    title: 'Perbandingan Biaya API: Gemini vs Claude vs OpenAI',
-    desc: 'Prompt AI API Cost Analyst beserta hasilnya: harga token, simulasi biaya chatbot per conversation, dan rekomendasi model paling ekonomis.'
+    title: 'API Cost Comparison: Gemini vs Claude vs OpenAI',
+    desc: 'AI API Cost Analyst prompt and its results: token prices, chatbot cost simulation per conversation, and the most economical model.'
   }
 ]

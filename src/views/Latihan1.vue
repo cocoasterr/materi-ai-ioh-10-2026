@@ -2,40 +2,40 @@
 import CopyBtn from '../components/CopyBtn.vue'
 
 const KURS = 18130
-const idr = n => 'Rp' + Math.round(n).toLocaleString('id-ID')
+const idr = n => 'Rp' + Math.round(n).toLocaleString('en-US')
 
 const prompt = `Role
 Act as an AI API Cost Analyst specializing in Gemini, Claude, and OpenAI pricing.
 
 Context
-Saya ingin membandingkan biaya penggunaan API AI untuk aplikasi chatbot berdasarkan harga token terbaru dari masing-masing provider.
+I want to compare AI API costs for a chatbot application based on the latest token prices from each provider.
 
 Objective
-Mendapatkan perbandingan harga token dan simulasi biaya penggunaan chatbot dalam satu conversation.
+Get a token price comparison and a chatbot cost simulation for a single conversation.
 
 Input
 - Provider: Google Gemini, Anthropic Claude, OpenAI ChatGPT.
-- Model: Model API terbaru dan relevan dari masing-masing provider.
-- Estimasi penggunaan: 1 conversation terdiri dari 10 kali interaksi (user prompt + AI response).
+- Model: The latest relevant API models from each provider.
+- Estimated usage: 1 conversation consists of 10 interactions (user prompt + AI response).
 
 Constraints
-- Gunakan harga resmi terbaru dari website masing-masing provider.
-- Pisahkan biaya Input Token dan Output Token.
-- Hitung berdasarkan USD dan konversi ke IDR.
-- Perhitungkan context token yang terakumulasi dalam conversation.
-- Jangan menggunakan asumsi harga tanpa sumber resmi.
-- Bedakan cached token jika tersedia.
+- Use the latest official prices from each provider's website.
+- Separate Input Token and Output Token costs.
+- Calculate in USD and convert to IDR.
+- Account for context tokens accumulating over the conversation.
+- Do not assume prices without an official source.
+- Distinguish cached tokens where available.
 
 Output
-- Tabel perbandingan harga per 1 juta Input dan Output Tokens.
-- Breakdown biaya setiap interaksi (per turn).
-- Simulasi total biaya untuk 1 conversation (10 interaksi).
-- Simulasi biaya untuk 1.000 dan 10.000 conversations.
-- Kesimpulan provider dan model paling ekonomis untuk aplikasi chatbot.
+- Price comparison table per 1 million Input and Output Tokens.
+- Cost breakdown for each interaction (per turn).
+- Total cost simulation for 1 conversation (10 interactions).
+- Cost simulation for 1,000 and 10,000 conversations.
+- Conclusion: the most economical provider and model for a chatbot application.
 
-Sertakan rumus perhitungan, asumsi token, sumber referensi resmi, dan tanggal update harga.`
+Include calculation formulas, token assumptions, official reference sources, and the price update date.`
 
-const stats = [['3', 'Provider'], ['9', 'Model dibandingkan'], ['10', 'Turn / conversation'], ['Rp18.130', 'Kurs USD (JISDOR, 6 Nov 2026)']]
+const stats = [['3', 'Providers'], ['9', 'Models compared'], ['10', 'Turns / conversation'], ['Rp18,130', 'USD rate (JISDOR, 6 Nov 2026)']]
 
 const harga = [
   ['Anthropic', 'Claude Opus 5.5', 4, 0.2, 5, 20],
@@ -45,9 +45,9 @@ const harga = [
   ['OpenAI', 'GPT-6.1 Sol', 2, 0.1, 2.5, 10],
   ['OpenAI', 'GPT-6.1 Terra', 1, 0.05, 1.25, 5],
   ['OpenAI', 'GPT-6 Luna', 0.1, 0.01, 0.125, 0.5],
-  ['Google', 'Gemini 4 Argon (promo s.d. 30 Nov)', '2 → 4', '0,1 → 0,2', '–', '10 → 20'],
-  ['Google', 'Gemini 3.8 Flash (promo s.d. 31 Des)', '0,75 → 1,5', '0,075 + storage', '–', '3,75 → 7,5'],
-  ['Google', 'Gemini 3.5 Flash-Lite', 0.3, '0,03 + storage', '–', 2.5]
+  ['Google', 'Gemini 4 Argon (promo until 30 Nov)', '2 → 4', '0.1 → 0.2', '–', '10 → 20'],
+  ['Google', 'Gemini 3.8 Flash (promo until 31 Dec)', '0.75 → 1.5', '0.075 + storage', '–', '3.75 → 7.5'],
+  ['Google', 'Gemini 3.5 Flash-Lite', 0.3, '0.03 + storage', '–', 2.5]
 ]
 
 // Simulasi Sonnet 5.5: I(n) = 200 + 400n, output 300/turn, cache read $0.1, write $2.5
@@ -70,18 +70,18 @@ const total = [
   ['Gemini 4 Argon (promo)', 0.078, 0.04038, 'Google'],
   ['Claude Sonnet 5.5', 0.078, 0.04248, 'Claude'],
   ['GPT-6.1 Sol', 0.078, 0.04248, 'OpenAI'],
-  ['Gemini 4 Argon (mulai 1 Des)', 0.156, 0.08076, 'Google']
+  ['Gemini 4 Argon (from 1 Dec)', 0.156, 0.08076, 'Google']
 ]
 const max = Math.max(...total.map(t => t[2]))
 
 const skala = [1000, 10000]
 
 const catatan = [
-  ['Tokenizer Claude', 'Sekitar 30% lebih banyak token untuk teks yang sama, jadi biaya riil Haiku bisa ±30% di atas Luna.'],
-  ['Batas 100K Haiku 5.5', 'Harga naik 5× di atas 100K token prompt. Perlu dijaga jika memakai RAG dokumen besar.'],
-  ['Promo Gemini', 'Argon naik 2× mulai 1 Des 2026; 3.8 Flash naik 2× mulai 1 Jan 2027.'],
-  ['Reasoning token', 'GPT-6.1 Sol tidak bisa mematikan reasoning; token reasoning ditagih sebagai output.'],
-  ['Belum dihitung', 'Pajak layanan digital, minimum panjang prompt cache, kedaluwarsa cache, storage cache Gemini, fluktuasi kurs.']
+  ['Claude tokenizer', 'Produces about 30% more tokens for the same text, so real Haiku cost can be ~30% above Luna.'],
+  ['Haiku 5.5 100K limit', 'Price rises 5× above 100K prompt tokens. Watch this if you use RAG with large documents.'],
+  ['Gemini promo', 'Argon doubles from 1 Dec 2026; 3.8 Flash doubles from 1 Jan 2027.'],
+  ['Reasoning tokens', 'GPT-6.1 Sol cannot disable reasoning; reasoning tokens are billed as output.'],
+  ['Not included', 'Digital services tax, minimum prompt length for caching, cache expiry, Gemini cache storage, exchange-rate fluctuation.']
 ]
 </script>
 
@@ -89,8 +89,8 @@ const catatan = [
   <div class="wrap l1">
     <header class="hero">
       <span class="pill"><span class="dot" /> Latihan 1 · AI Cost Analysis</span>
-      <h1>Biaya API Chatbot: <span class="grad">Gemini vs Claude vs OpenAI</span></h1>
-      <p class="sub">Satu prompt terstruktur (Role–Context–Objective–Input–Constraints–Output) untuk membandingkan harga token dan mensimulasikan biaya chatbot. Harga diakses 12 November 2026.</p>
+      <h1>Chatbot API Cost: <span class="grad">Gemini vs Claude vs OpenAI</span></h1>
+      <p class="sub">One structured prompt (Role–Context–Objective–Input–Constraints–Output) to compare token prices and simulate chatbot costs. Prices accessed 12 November 2026.</p>
     </header>
 
     <div class="stats">
@@ -105,18 +105,18 @@ const catatan = [
       </div>
     </section>
 
-    <h2 class="part">Hasil</h2>
+    <h2 class="part">Results</h2>
 
     <section class="card win">
       <div class="body">
-        <span class="trophy">Paling ekonomis</span>
+        <span class="trophy">Most economical</span>
         <h3>Claude Haiku 5.5 &amp; GPT-6 Luna</h3>
-        <p>Harga list identik. <b>{{ idr(0.00222 * KURS) }}</b> per conversation dengan cache, atau sekitar <b>{{ idr(0.00222 * KURS * 10000) }}</b> per 10.000 conversation. Sekitar 4× lebih murah dari Gemini 3.5 Flash-Lite.</p>
+        <p>Identical list prices. <b>{{ idr(0.00222 * KURS) }}</b> per conversation with cache, or about <b>{{ idr(0.00222 * KURS * 10000) }}</b> per 10,000 conversations. Roughly 4× cheaper than Gemini 3.5 Flash-Lite.</p>
       </div>
     </section>
 
     <section class="card">
-      <h2>1. Harga per 1 Juta Token (USD)</h2>
+      <h2>1. Price per 1 Million Tokens (USD)</h2>
       <div class="body scroll">
         <table>
           <thead><tr><th>Provider</th><th>Model</th><th>Input</th><th>Cache read</th><th>Cache write</th><th>Output</th></tr></thead>
@@ -126,32 +126,32 @@ const catatan = [
     </section>
 
     <section class="card">
-      <h2>2. Rumus &amp; Asumsi</h2>
+      <h2>2. Formulas &amp; Assumptions</h2>
       <div class="body">
-        <p>System prompt 500 token · user 100 token/turn · respons AI 300 token/turn (termasuk reasoning) · riwayat dikirim ulang tiap turn.</p>
-        <pre>Input turn ke-n  : Iₙ = S + n·U + (n−1)·R = 200 + 400n
-Tanpa cache      : Iₙ × P_in / 10⁶ + R × P_out / 10⁶
-Dengan cache     : n=1 → I₁ × P_write
+        <p>System prompt 500 tokens · user 100 tokens/turn · AI response 300 tokens/turn (including reasoning) · full history resent every turn.</p>
+        <pre>Input at turn n  : Iₙ = S + n·U + (n−1)·R = 200 + 400n
+Without cache   : Iₙ × P_in / 10⁶ + R × P_out / 10⁶
+With cache      : n=1 → I₁ × P_write
                    n≥2 → Iₙ₋₁ × P_read + 400 × P_write + R × P_out</pre>
       </div>
     </section>
 
     <section class="card">
-      <h2>3. Biaya per Turn — Claude Sonnet 5.5</h2>
+      <h2>3. Cost per Turn — Claude Sonnet 5.5</h2>
       <div class="body scroll">
         <table>
-          <thead><tr><th>Turn</th><th>Input token</th><th>Tanpa cache</th><th>Dengan cache</th></tr></thead>
+          <thead><tr><th>Turn</th><th>Input tokens</th><th>No cache</th><th>With cache</th></tr></thead>
           <tbody>
-            <tr v-for="t in turns" :key="t[0]"><td>{{ t[0] }}</td><td>{{ t[1].toLocaleString('id-ID') }}</td><td>${{ t[2].toFixed(5) }}</td><td>${{ t[3].toFixed(5) }}</td></tr>
-            <tr class="sum"><td>Total</td><td>24.000</td><td>${{ sum(2).toFixed(5) }}</td><td>${{ sum(3).toFixed(5) }}</td></tr>
+            <tr v-for="t in turns" :key="t[0]"><td>{{ t[0] }}</td><td>{{ t[1].toLocaleString('en-US') }}</td><td>${{ t[2].toFixed(5) }}</td><td>${{ t[3].toFixed(5) }}</td></tr>
+            <tr class="sum"><td>Total</td><td>24,000</td><td>${{ sum(2).toFixed(5) }}</td><td>${{ sum(3).toFixed(5) }}</td></tr>
           </tbody>
         </table>
-        <p class="note">Tanpa cache, biaya turn 10 hampir 3× turn 1. Dengan cache, biaya per turn hampir datar.</p>
+        <p class="note">Without cache, turn 10 costs almost 3× turn 1. With cache, cost per turn stays nearly flat.</p>
       </div>
     </section>
 
     <section class="card">
-      <h2>4. Total 1 Conversation (10 Interaksi, dengan Cache)</h2>
+      <h2>4. Total per Conversation (10 Interactions, with Cache)</h2>
       <div class="body">
         <div class="chart" v-for="t in total" :key="t[0]">
           <span class="lbl">{{ t[0] }}</span>
@@ -163,10 +163,10 @@ Dengan cache     : n=1 → I₁ × P_write
     </section>
 
     <section class="card">
-      <h2>5. Simulasi Skala (dengan Cache)</h2>
+      <h2>5. Scale Simulation (with Cache)</h2>
       <div class="body scroll">
         <table>
-          <thead><tr><th>Model</th><th>1 conv</th><th v-for="n in skala" :key="n">{{ n.toLocaleString('id-ID') }} conv</th></tr></thead>
+          <thead><tr><th>Model</th><th>1 conv</th><th v-for="n in skala" :key="n">{{ n.toLocaleString('en-US') }} conv</th></tr></thead>
           <tbody>
             <tr v-for="t in total" :key="t[0]">
               <td>{{ t[0] }}</td><td>{{ idr(t[2] * KURS) }}</td>
@@ -178,14 +178,14 @@ Dengan cache     : n=1 → I₁ × P_write
     </section>
 
     <section class="card">
-      <h2>Catatan Penting</h2>
+      <h2>Key Notes</h2>
       <div class="body">
         <ul><li v-for="[k, v] in catatan" :key="k"><b>{{ k }}.</b> {{ v }}</li></ul>
-        <p class="note">Kelas menengah: Sonnet 5.5, GPT-6.1 Sol, dan Gemini 4 Argon berharga sama ($2/$10). Argon hanya lebih murah sampai 30 November. Prompt caching menghemat ±45%.</p>
+        <p class="note">Mid-tier: Sonnet 5.5, GPT-6.1 Sol, and Gemini 4 Argon are priced the same ($2/$10). Argon is cheaper only until 30 November. Prompt caching saves ~45%.</p>
       </div>
     </section>
 
-    <footer><RouterLink to="/">← Beranda</RouterLink></footer>
+    <footer><RouterLink to="/">← Home</RouterLink></footer>
   </div>
 </template>
 
