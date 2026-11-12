@@ -149,7 +149,23 @@ const hasil = [
 
     <section class="card">
       <h2>Latihan Lanjutan</h2>
-      <div class="body"><p>Tambahkan subagent keempat, misalnya <code>retensi.md</code>, yang menawarkan kompensasi kepada pelanggan terdampak gangguan jaringan.</p></div>
+      <div class="body">
+        <p>Buat <b>case semenarik mungkin</b> dengan multi-agent Antigravity, lalu presentasikan ke pemateri untuk dinilai.</p>
+        <ul>
+          <li>Pilih skenario sendiri (boleh dari pekerjaan Anda atau industri lain).</li>
+          <li>Buat minimal 3 subagent dengan tugas dan data dummy masing-masing.</li>
+          <li>Jalankan lewat satu prompt ke agent utama dan tunjukkan hasilnya.</li>
+        </ul>
+        <table>
+          <thead><tr><th>Kriteria</th><th>Yang dinilai</th></tr></thead>
+          <tbody>
+            <tr><td>Kreativitas &amp; relevansi</td><td>Skenario menarik dan dekat dengan kebutuhan bisnis nyata</td></tr>
+            <tr><td>Desain subagent</td><td>Pembagian tugas jelas, deskripsi dan prompt tepat</td></tr>
+            <tr><td>Hasil</td><td>Jawaban akurat, runtut, dan dapat ditindaklanjuti</td></tr>
+            <tr><td>Presentasi</td><td>Penjelasan singkat dan demo berjalan</td></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <footer><RouterLink to="/">← Beranda</RouterLink></footer>
